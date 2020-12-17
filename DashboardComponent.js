@@ -16,10 +16,6 @@ import {
 import CheckBox from 'react-native-check-box';
 import AsyncStorage from "@react-native-community/async-storage";
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import Constants from "expo-constants";
-import { ScrollView } from 'react-native-gesture-handler';
-
-
 
 export default class DashboardComponent extends React.Component {
     constructor() {
@@ -145,15 +141,20 @@ export default class DashboardComponent extends React.Component {
     renderListItem = (info) => {
         let currentItem = info.item;
         return (
+            // get border bottom
             <View style={{ flexDirection: 'row', justifyContent: 'flex-start', padding: 15, borderColor: "#9b9b9b", borderBottomWidth: 1 }}>
                 <CheckBox
                     style={{ paddingTop: 10 }}
                     onClick={() => {
                         this.toggleCheckbox(currentItem);
+                        // save list every time checkbox is clicked
                         setTimeout(() => { this.saveData(); }, 0);
                     }}
                     isChecked={currentItem.done}
                 />
+
+                {/* list title stored in async storage 
+                        -> navigate to focus screen */}
                 <TouchableOpacity style={{ paddingTop: 10, paddingLeft: 10, flex: 1 }} onPress={() => {
                     AsyncStorage.setItem('current', JSON.stringify(currentItem));
                     this.props.navigation.navigate('Focus');
@@ -162,6 +163,8 @@ export default class DashboardComponent extends React.Component {
                         {currentItem.title}
                     </Text>
                 </TouchableOpacity>
+
+                {/* delete button */}
                 <View style={{ paddingVertical: 13, paddingHorizontal: 10 }}>
                     <Icon name="trash" style={{ fontSize: 18 }} onPress={() => {
                         this.deleteTodo(currentItem);
@@ -172,45 +175,52 @@ export default class DashboardComponent extends React.Component {
     };
 
     render() {
+        // link modalVisible variable to the variable at state
         const { modalVisible } = this.state;
 
         return (
+            // image background
             <ImageBackground style={styles.backgroundImage} source={require('./assets/tasks.jpg')}>
+                {/* container */}
                 <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
 
-                    <View style={{ flexDirection: "row", paddingVertical: 15, marginVertical:20, justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+                    {/* header */}
+                    <View style={{ flexDirection: "row", paddingVertical: 15, marginVertical: 20, justifyContent: 'space-between' }}>
+                        <Text style={{ fontSize: 34, fontWeight: "bold" }}>
                             Tasks List
                         </Text>
 
+                        {/* add task button */}
                         <TouchableOpacity title="Show Modal" style={{ padding: 1 }} onPress={() => {
                             this.setModalVisible(true);
                         }}>
                             <Icon name="plus" style={{ fontSize: 38, paddingHorizontal: 5, color: "black" }} />
                         </TouchableOpacity>
-
                     </View>
 
-
+                    {/* grey background for flatlist */}
                     <View style={styles.flexStyle}>
-
                         <FlatList
                             renderItem={this.renderListItem}
                             data={this.state.data}
                             keyExtractor={(item) => item.id} />
                     </View>
 
+                    {/* modal component */}
                     <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => {
                         this.setModalVisible(!modalVisible);
-                    }}
-                    >
+                    }}>
+
+                        {/* styling for modals */}
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
 
+                                {/* modal header */}
                                 <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 15 }}>
                                     Add New Task
-                            </Text>
+                                </Text>
 
+                                {/* text input field */}
                                 <TextInput
                                     style={styles.textbox}
                                     value={this.state.tempTodo}
@@ -220,8 +230,10 @@ export default class DashboardComponent extends React.Component {
                                     placeholder={'Enter todo'}
                                 />
 
+                                {/* styling buttons in a row */}
                                 <View style={{ paddingTop: 25, flexDirection: "row" }}>
 
+                                    {/* cancel btn */}
                                     <View style={{ paddingRight: 5, width: "50%" }}>
                                         <Button title="Cancel" onPress={() => {
                                             this.setModalVisible(!modalVisible);
@@ -230,6 +242,8 @@ export default class DashboardComponent extends React.Component {
                                             });
                                         }} />
                                     </View>
+
+                                    {/* add btn */}
                                     <View style={{ paddingLeft: 5, width: "50%" }}>
                                         <Button title="Add" onPress={this.addTodo} />
                                     </View>
@@ -245,6 +259,7 @@ export default class DashboardComponent extends React.Component {
     }
 }
 
+// get device height
 let { height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
