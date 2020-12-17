@@ -10,8 +10,9 @@ import {
     Keyboard,
     TouchableOpacity,
     Modal,
-    ImageBackground,
-    Dimensions
+    Image,
+    Dimensions,
+    Alert
 } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import AsyncStorage from "@react-native-community/async-storage";
@@ -57,7 +58,7 @@ export default class DashboardComponent extends React.Component {
                 this.setState({ data: JSON.parse(value) });
             }
         } catch (error) {
-            alert('Problem retriving data');
+            Alert.alert('Problem retriving data');
         }
     };
 
@@ -83,7 +84,7 @@ export default class DashboardComponent extends React.Component {
 
             Keyboard.dismiss();
             this.setState({ modalVisible: false });
-            alert('Task is added successfully!');
+            Alert.alert('Task is added successfully!');
         }
         else {
             this.setState({
@@ -109,7 +110,7 @@ export default class DashboardComponent extends React.Component {
         });
 
         setTimeout(() => { this.saveData(); }, 0);
-        alert('Task has been deleted!');
+        Alert.alert('Deleted task!');
     };
 
     toggleCheckbox = (currentItem) => {
@@ -137,12 +138,13 @@ export default class DashboardComponent extends React.Component {
             data: todos,
         });
     };
+    
 
     renderListItem = (info) => {
         let currentItem = info.item;
         return (
             // get border bottom
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', padding: 15, borderColor: "#9b9b9b", borderBottomWidth: 1 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', padding: 15, borderColor: "#9b9b9b", borderBottomWidth: 2 }}>
                 <CheckBox
                     style={{ paddingTop: 10 }}
                     onClick={() => {
@@ -179,82 +181,83 @@ export default class DashboardComponent extends React.Component {
         const { modalVisible } = this.state;
 
         return (
-            // image background
-            <ImageBackground style={styles.backgroundImage} source={require('./assets/tasks.jpg')}>
-                {/* container */}
-                <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
 
-                    {/* header */}
-                    <View style={{ flexDirection: "row", paddingVertical: 15, marginVertical: 20, justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 34, fontWeight: "bold" }}>
-                            Tasks List
+                {/* header */}
+                <View style={{ flexDirection: "row", paddingVertical: 15, marginVertical: 20, justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 34, fontWeight: "bold", color: "#fff" }}>
+                        Tasks List
                         </Text>
 
-                        {/* add task button */}
-                        <TouchableOpacity title="Show Modal" style={{ padding: 1 }} onPress={() => {
-                            this.setModalVisible(true);
-                        }}>
-                            <Icon name="plus" style={{ fontSize: 38, paddingHorizontal: 5, color: "black" }} />
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* grey background for flatlist */}
-                    <View style={styles.flexStyle}>
-                        <FlatList
-                            renderItem={this.renderListItem}
-                            data={this.state.data}
-                            keyExtractor={(item) => item.id} />
-                    </View>
-
-                    {/* modal component */}
-                    <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => {
-                        this.setModalVisible(!modalVisible);
+                    {/* add task button */}
+                    <TouchableOpacity title="Show Modal" style={{ padding: 1 }} onPress={() => {
+                        this.setModalVisible(true);
                     }}>
+                        <Icon name="plus" style={{ fontSize: 38, paddingHorizontal: 5, color: "#fff", marginLeft: 5 }} />
+                        <Text style={{color:"#fff"}}>Add Task</Text>
+                    </TouchableOpacity>
+                </View>
 
-                        {/* styling for modals */}
-                        <View style={styles.centeredView}>
-                            <View style={styles.modalView}>
+                <View>
+                    <Image source={require("./assets/focus_crop.jpg")} style={{width:"100%", height: 170}}/>
+                </View>
 
-                                {/* modal header */}
-                                <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 15 }}>
-                                    Add New Task
+                {/* grey background for flatlist */}
+                <View style={styles.flexStyle}>
+                    <FlatList
+                        renderItem={this.renderListItem}
+                        data={this.state.data}
+                        keyExtractor={(item) => item.id} />
+                </View>
+
+                {/* modal component */}
+                <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => {
+                    this.setModalVisible(!modalVisible);
+                }}>
+
+                    {/* styling for modals */}
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+
+                            {/* modal header */}
+                            <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 15 }}>
+                                Add New Task
                                 </Text>
 
-                                {/* text input field */}
-                                <TextInput
-                                    style={styles.textbox}
-                                    value={this.state.tempTodo}
-                                    onChangeText={(text) => {
-                                        this.setState({ tempTodo: text });
-                                    }}
-                                    placeholder={'Enter todo'}
-                                />
+                            {/* text input field */}
+                            <TextInput
+                                style={styles.textbox}
+                                value={this.state.tempTodo}
+                                onChangeText={(text) => {
+                                    this.setState({ tempTodo: text });
+                                }}
+                                placeholder={'Enter todo'}
+                            />
 
-                                {/* styling buttons in a row */}
-                                <View style={{ paddingTop: 25, flexDirection: "row" }}>
+                            {/* styling buttons in a row */}
+                            <View style={{ paddingTop: 25, flexDirection: "row" }}>
 
-                                    {/* cancel btn */}
-                                    <View style={{ paddingRight: 5, width: "50%" }}>
-                                        <Button title="Cancel" onPress={() => {
-                                            this.setModalVisible(!modalVisible);
-                                            this.setState({
-                                                tempTodo: '', // reset temp todo to empty,
-                                            });
-                                        }} />
-                                    </View>
-
-                                    {/* add btn */}
-                                    <View style={{ paddingLeft: 5, width: "50%" }}>
-                                        <Button title="Add" onPress={this.addTodo} />
-                                    </View>
+                                {/* cancel btn */}
+                                <View style={{ paddingRight: 5, width: "50%" }}>
+                                    <Button title="Cancel" onPress={() => {
+                                        this.setModalVisible(!modalVisible);
+                                        this.setState({
+                                            tempTodo: '', // reset temp todo to empty,
+                                        });
+                                    }} />
                                 </View>
 
+                                {/* add btn */}
+                                <View style={{ paddingLeft: 5, width: "50%" }}>
+                                    <Button title="Add" onPress={this.addTodo} />
+                                </View>
                             </View>
-                        </View>
-                    </Modal>
 
-                </KeyboardAvoidingView >
-            </ImageBackground>
+                        </View>
+                    </View>
+                </Modal>
+
+            </KeyboardAvoidingView >
         );
     }
 }
@@ -266,7 +269,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'flex-start',
-        backgroundColor: '#ecf0f12d',
+        backgroundColor: '#2b303b',
         padding: 15,
     },
     textbox: {
@@ -279,7 +282,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         alignContent: 'center',
         width: '100%',
-        fontSize: 18
+        fontSize: 18,
+        backgroundColor: "#fff"
     },
     centeredView: {
         flex: 1,
@@ -290,7 +294,7 @@ const styles = StyleSheet.create({
     modalView: {
         width: "90%",
         margin: 20,
-        backgroundColor: '#ecf0f1',
+        backgroundColor: '#f4f4f4',
         borderRadius: 20,
         paddingVertical: 35,
         paddingHorizontal: 20,
@@ -304,14 +308,19 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5
     },
-    backgroundImage: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-    },
     flexStyle: {
-        backgroundColor: '#ecf0f19f',
-        borderRadius: 5,
-        maxHeight: height - 175
+        backgroundColor: '#f4f4f4',
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
+        marginTop: 40,
+        maxHeight: height - 390,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
     },
 });
