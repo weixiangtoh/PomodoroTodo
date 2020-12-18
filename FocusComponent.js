@@ -9,7 +9,8 @@ import {
     Animated,
     Vibration,
     KeyboardAvoidingView,
-    TextInput
+    TextInput,
+    Keyboard
 } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import AsyncStorage from "@react-native-community/async-storage";
@@ -288,7 +289,8 @@ export default class FocusComponent extends React.Component {
                             style={styles.input}
                             keyboardType="numeric"
                             onChangeText={this.onWorkInputChange}
-                        />
+                            returnKeyType={ 'done' }
+                            />
                     </View>
                     <View style={styles.inputContainer}>
                         <Text style={styles.inputLabel}>Break Mins:</Text>
@@ -298,6 +300,7 @@ export default class FocusComponent extends React.Component {
                             style={styles.input}
                             keyboardType="numeric"
                             onChangeText={this.onBreakInputChange}
+                            returnKeyType={ 'done' }
                         />
                     </View>
 
